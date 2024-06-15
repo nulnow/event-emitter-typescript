@@ -1,5 +1,5 @@
 type EventMap = {
-  [key: string | number | symbol]: unknown; // (...args: any[]) => void;
+  [key: string | number | symbol]: any; // (...args: any[]) => void;
 };
 
 type Subscriber<T> = (data: T[keyof T]) => void;
