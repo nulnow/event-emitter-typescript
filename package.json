@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/nulnow/event-emitter-typescript/issues"
   },
-  "homepage": "https://github.com/nulnow/event-emitter-typescript#readme",
+  "homepage": "https://event-emitter.com",
   "jest": {
     "transform": {
       ".(ts|tsx)": "ts-jest"
