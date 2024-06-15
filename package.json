@@ -1,0 +1,86 @@
+{
+  "name": "event-emitter-typescript",
+  "version": "1.0.0",
+  "description": "Typesafe event emitter for browser and Node",
+  "main": "dist/event-emitter-typescript.umd.js",
+  "module": "dist/event-emitter-typescript.es5.js",
+  "typings": "dist/types/event-emitter-typescript.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "docs": "documentation readme event-emitter-typescript.ts --section API -q --parse-extension ts",
+    "prebuild": "rimraf dist",
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nulnow/event-emitter-typescript.git"
+  },
+  "keywords": [
+    "typescript",
+    "event-emitter"
+  ],
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "author": "nulnow <razuvaev.andrey.m@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nulnow/event-emitter-typescript/issues"
+  },
+  "homepage": "https://github.com/nulnow/event-emitter-typescript#readme",
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    },
+    "collectCoverageFrom": [
+      "event-emitter-typescript.ts"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.2",
+    "@types/node": "^10.11.0",
+    "documentation": "^14.0.2",
+    "jest": "^29.7.0",
+    "jest-config": "^29.7.0",
+    "lodash.camelcase": "^4.3.0",
+    "prettier": "^1.14.3",
+    "rimraf": "^2.6.2",
+    "rollup": "^1.26.3",
+    "rollup-plugin-commonjs": "^9.1.8",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "semantic-release": "^24.0.0",
+    "shelljs": "^0.8.3",
+    "ts-jest": "^29.1.4",
+    "ts-node": "^9.0.0",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "tslint-config-standard": "^8.0.1",
+    "typedoc": "^0.25.13",
+    "typescript": "^5.4.5"
+  }
+}
