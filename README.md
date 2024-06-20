@@ -8,8 +8,6 @@
 ![Static Badge](https://img.shields.io/badge/coverage-100%25-success)
 ![NPM Downloads](https://img.shields.io/npm/d18m/event-emitter-typescript)
 ![NPM Version](https://img.shields.io/npm/v/event-emitter-typescript)
-![NPM License](https://img.shields.io/npm/l/event-emitter-typescript)
-![Node LTS](https://img.shields.io/node/v-lts/event-emitter-typescript)
 
 
 #### Links:
