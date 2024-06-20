@@ -1,6 +1,6 @@
 {
   "name": "event-emitter-typescript",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Typesafe event emitter for browser and Node",
   "main": "dist/event-emitter-typescript.umd.js",
   "module": "dist/event-emitter-typescript.es5.js",
