@@ -1,12 +1,161 @@
-# event-emitter-typescript
+# 🦘 event-emitter-typescript
 
-Typesafe Event Emitter for browser and Nodejs
+## A minimal, type-safe event emitter library for browser and Node.js
+
+### ⚛️ Comes with optional React bindings ⚛️
+
+![Size Gzip](https://img.shields.io/bundlejs/size/event-emitter-typescript)
+![Static Badge](https://img.shields.io/badge/coverage-100%25-success)
+![NPM Downloads](https://img.shields.io/npm/d18m/event-emitter-typescript)
+![NPM Version](https://img.shields.io/npm/v/event-emitter-typescript)
+![NPM License](https://img.shields.io/npm/l/event-emitter-typescript)
+![Node LTS](https://img.shields.io/node/v-lts/event-emitter-typescript)
+
+
+#### Links:
+* Documentation: [event-emitter.com](http://event-emitter.com)
+* NPM Package: [npmjs.com/package/event-emitter-typescript](https://www.npmjs.com/package/event-emitter-typescript)
 
 Installation:
+
+With npm:
 
 ```bash
 npm i event-emitter-typescript
 ```
+
+With yarn:
+
+```bash
+yarn add event-emitter-typescript
+```
+
+## Usage
+
+Basic usage
+
+```typescript
+import {EventEmitter} from "event-emitter-typescript";
+
+const eventEmitter = new EventEmitter<{
+  "user:registered": { name: string; email: string; };
+  "otherEvent": { data: string; };
+}>();
+
+// Type-safe - inferred user type
+const unsubscribe = eventEmitter.on("user:registered", async (user) => {
+  await userRepository.save(user);
+});
+
+// Type-safe
+eventEmitter.emit("user:registered", { name: "John Doe", email: "johndoe@example.org" });
+
+// TypeScript error - email should be present
+eventEmitter.emit("user:registered", { name: "John Doe" });
+
+// Call unsubscribe function when we do not need to listen for "user:registered" anymore
+unsubscribe();
+```
+
+
+## React
+
+### Implementing clean code principles and Inversion of Control (IoC)
+
+To ensure loose coupling, avoid using a global eventEmitter variable.
+Instead, create an event emitter instance and pass it to the `createProvider` function.
+Then, use the event emitter from the created context.
+
+```tsx
+/*
+  Let's assume we have the following project structure:
+  
+  src/
+    - App.tsx
+    - emitter.ts
+    - index.tsx
+    
+*/
+```
+
+src/emitter.ts
+
+```tsx
+import { EventEmitter } from "event-emitter-typescript";
+import { createProvider } from "event-emitter-typescript/react"
+
+// Create our own event map
+type EventMap = {
+  "user:updated": {
+    id: number;
+    email: string;
+    name: string;
+  };
+  "article:created": {
+    id: number;
+    title: string;
+    body: string;
+  };
+};
+
+// Create a typed event emitter instance. Export it to use in not-react prat of the app
+export const eventEmitter = new EventEmitter<EventMap>();
+
+// Create a context provider and hooks to work with it in our React app
+// useEvent and useEventEmitter are statically typed here
+export const [EventEmitterContextProvider, { useEvent, useEventEmitter }] = createProvider(eventEmitter);
+```
+
+src/index.tsx
+
+```tsx
+import React from "react";
+import { createRoot } from "react-dom";
+import { EventEmitterProvider } from "@/emitter";
+import { App } from "@/App";
+
+createRoot(document.getElementById('root')).render(
+  <EventEmitterProvider>
+    <App />
+  </EventEmitterProvider>
+);
+
+```
+
+src/App.tsx
+
+```tsx
+
+import React from "react";
+import { useEvent, useEventEmitter } from "@/emitter";
+
+export const App = () => {
+  const [articles, setArticles] = useState([]);
+  
+  const eventEmitter = useEventEmitter();
+  
+  // Article here is typed as { id: number; title: string; body: string; }
+  useEvent("article:added", (article) => {
+    setArticles([...articles, article])
+  });
+  
+  return (
+    <main>
+      <button
+        onClick={() => {
+          // We can use useEventEmitter and useEvent from src/emitter in any child component
+          eventEmitter.emit("article:added", { id: 1, title: 'new article', body: 'hello world' });
+        }}
+      >
+        Add article
+      </button>
+      <h1>My blog</h1>
+      {articles.map(article => <Article key={article.id} {...article} />)}
+    </main>
+  );
+};
+```
+
 
 ### API
 
@@ -14,45 +163,22 @@ npm i event-emitter-typescript
 
 ##### Table of Contents
 
-*   [EventEmitter](#eventemitter)
-    *   [Examples](#examples)
-    *   [on](#on)
-        *   [Parameters](#parameters)
-        *   [Examples](#examples-1)
-    *   [emit](#emit)
-        *   [Parameters](#parameters-1)
-        *   [Examples](#examples-2)
-    *   [off](#off)
-        *   [Parameters](#parameters-2)
-        *   [Examples](#examples-3)
+* [Base](#Base)
+   *   [EventEmitter](#eventemitter)
+       *   [on](#on)
+       *   [emit](#emit)
+       *   [off](#off)
+
+*   [React](#react)
+    *   [createProvider](#createprovider) 
+
+### Base
 
 #### EventEmitter
 
 EventEmitter&lt;Events&gt; class.
 
 Accepts custom event map as a generic param.
-
-##### Examples
-
-```typescript
-import {EventEmitter} from "event-emitter-typescript";
-
-const eventEmitter = new EventEmitter<{
-  userRegistered: { name: string; email: string; };
-  otherEvent: { data: string; };
-}>();
-
-// typesafe, we have inferred user type here
-const unsubscribe = eventEmitter.on("userRegistered", async (user) => {
-  await userRepository.save(user);
-});
-
-// typesafe
-eventEmitter.emit("userRegistered", { name: "John Doe", email: "johndoe@example.org" });
-
-// typescript error, email should be present
-eventEmitter.emit("userRegistered", { name: "John Doe" });
-```
 
 ##### on
 
@@ -66,15 +192,15 @@ Subscribes an event handler to the event
 ###### Examples
 
 ```typescript
-// typesafe
-const unsubscribe = eventEmitter.on("userRegistered", async (user) => {
+// Type-safe
+const unsubscribe = eventEmitter.on("user:registered", async (user) => {
   await userRepository.save(user);
 });
 
-// typesafe
-eventEmitter.emit("userRegistered", { name: "John Doe", email: "johndoe@example.org" });
+// Type-safe
+eventEmitter.emit("user:registered", { name: "John Doe", email: "johndoe@example.org" });
 
-// Call unsubscribe fn when we do not need to listen for "userRegistered" anymore
+// Call unsubscribe fn when we do not need to listen for "user:registered" anymore
 unsubscribe();
 ```
 
@@ -92,8 +218,8 @@ Emits an event to the subscribers
 ###### Examples
 
 ```typescript
-// typesafe
-eventEmitter.emit("userRegistered", { name: "John Doe", email: "johndoe@example.org" });
+// Type-safe
+eventEmitter.emit("user:registered", { name: "John Doe", email: "johndoe@example.org" });
 ```
 
 ##### off
@@ -108,7 +234,48 @@ Unsubscribes an event handler from the event
 ###### Examples
 
 ```typescript
-eventEmitter.off("userRegistered", registeredHandler);
+eventEmitter.off("user:registered", registeredHandler);
 ```
 
-Returns **void**&#x20;
+##### once
+
+Subscribes for a single event. Unsubscribes right after one event handled
+
+###### Parameters
+
+*   `event` **E** Key of provided custom event map
+*   `subscriber` **function (data: Events\[E\]): void** Event handler
+
+###### Examples
+
+```typescript
+eventEmitter.once("user:registered", registeredHandler);
+
+eventEmitter.emit("user:registered", { name: "a", email: "b" });
+eventEmitter.emit("user:registered", { name: "a", email: "b" });
+
+// registeredHandler was called only 1 time
+
+```
+
+### React
+
+#### createProvider
+
+Creates React context provider and hooks: useEvent, useEventEmitter
+
+###### Parameters
+
+*   `eventEmitter` **EventEmitter<EventMap>** Event emitter to work with
+
+###### Examples
+
+```typescript
+import { EventEmitter } from "event-emitter-typescript";
+import { createProvider } from "event-emitter-typescript/react";
+
+const eventEmitter = new EventEmitter<{ "user:created": {id: number} }>();
+
+// useEvent and useEvent emitter are statically typed here
+export const [EventEmitterProvider, { useEvent, useEventEmitter }] = createProvider(eventEmitter);
+```

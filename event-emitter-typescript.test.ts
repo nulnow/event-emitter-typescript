@@ -26,6 +26,19 @@ describe("EventEmitter", () => {
     expect(testEventHandler).toBeCalledTimes(0);
   });
 
+  it("Subscribers can subscribe to only on event", () => {
+    const eventEmitter = new EventEmitter<{ testEvent: string }>();
+
+    const testEventHandler = jest.fn();
+    eventEmitter.once("testEvent", testEventHandler);
+
+    eventEmitter.emit("testEvent", "testValue");
+    eventEmitter.emit("testEvent", "testValue");
+    eventEmitter.emit("testEvent", "testValue");
+
+    expect(testEventHandler).toBeCalledTimes(1);
+  });
+
   it("Subscribers can unsubscribe with off method", () => {
     const eventEmitter = new EventEmitter<{ testEvent: string }>();
 

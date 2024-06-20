@@ -1,17 +1,17 @@
 {
   "name": "event-emitter-typescript",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Typesafe event emitter for browser and Node",
   "main": "dist/event-emitter-typescript.umd.js",
   "module": "dist/event-emitter-typescript.es5.js",
-  "typings": "dist/types/event-emitter-typescript.d.ts",
+  "typings": "dist/event-emitter-typescript.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "docs": "documentation readme event-emitter-typescript.ts --section API -q --parse-extension ts",
     "prebuild": "rimraf dist",
-    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs  --theme minimal .",
     "test": "jest --coverage"
   },
   "repository": {
@@ -35,7 +35,7 @@
     "transform": {
       ".(ts|tsx)": "ts-jest"
     },
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "moduleFileExtensions": [
       "ts",
@@ -44,7 +44,8 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "/test/"
+      "/test/",
+      "react-example/"
     ],
     "coverageThreshold": {
       "global": {
@@ -55,15 +56,29 @@
       }
     },
     "collectCoverageFrom": [
-      "event-emitter-typescript.ts"
+      "event-emitter-typescript.ts",
+      "react.tsx"
     ]
   },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "devDependencies": {
-    "@types/jest": "^23.3.2",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.12",
     "@types/node": "^10.11.0",
+    "@types/react": "^18.3.3",
     "documentation": "^14.0.2",
     "jest": "^29.7.0",
     "jest-config": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "lodash.camelcase": "^4.3.0",
     "prettier": "^1.14.3",
     "rimraf": "^2.6.2",
